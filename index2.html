@@ -1,1 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fee Mapping - School ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .filter-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        .student-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+        }
+
+        .section-header {
+            background: #f8fafc;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .student-count {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .student-row {
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .student-row:hover {
+            background: #f8fafc;
+        }
+
+        .student-row.expanded {
+            background: #f0f4ff;
+        }
+
+        .student-row td {
+            padding: 16px;
+            vertical-align: top;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .student-details h4 {
+            font-size: 16px;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .student-id {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .sibling-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+
+        .sibling-badge {
+            background: #ed8936;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .fee-info {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .fee-frequency {
+            margin-bottom: 8px;
+        }
+
+        .fee-frequency select {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .fee-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .fee-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 4px 0;
+        }
+
+        .fee-total {
+            font-weight: 700;
+            color: #2d3748;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .due-dates {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 6px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-default {
+            background: #e6fffa;
+            color: #319795;
+        }
+
+        .status-modified {
+            background: #fef5e7;
+            color: #d69e2e;
+        }
+
+        .status-pending {
+            background: #fed7e2;
+            color: #e53e3e;
+        }
+
+        .customize-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-top: 3px solid #667eea;
+            display: none;
+        }
+
+        .customize-section.active {
+            display: block;
+        }
+
+        .customize-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .fee-customization {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .fee-head-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .fee-head-item:last-child {
+            border-bottom: none;
+        }
+
+        .fee-input {
+            width: 80px;
+            padding: 4px 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .discount-section {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .discount-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .discount-radio {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reason-textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e1e8ed;
+        }
+
+        .sidebar-header {
+            background: #f8fafc;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .sidebar-content {
+            padding: 16px;
+        }
+
+        .sibling-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sibling-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .sibling-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sibling-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .summary-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toggle-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .toggle-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        .warning-indicator {
+            color: #ed8936;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .modified-indicator {
+            color: #667eea;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .customize-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Student Fee Mapping</h1>
+            <p>Map and customize fee structures for students by class and section</p>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label for="class-select">Select Class</label>
+                    <select id="class-select" class="form-control">
+                        <option value="">Choose Class</option>
+                        <option value="class-1">Class 1</option>
+                        <option value="class-2">Class 2</option>
+                        <option value="class-3">Class 3</option>
+                        <option value="class-4">Class 4</option>
+                        <option value="class-5">Class 5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="section-select">Select Section</label>
+                    <select id="section-select" class="form-control">
+                        <option value="">Choose Section</option>
+                        <option value="section-a">Section A</option>
+                        <option value="section-b">Section B</option>
+                        <option value="section-c">Section C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student-search">OR Search by Student ID</label>
+                    <input type="text" id="student-search" class="form-control" placeholder="Enter Student ID">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="fetchStudents()">
+                        <span>🔍</span> Fetch Students
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toggle Filters -->
+        <div class="toggle-filters">
+            <button class="toggle-btn active" onclick="toggleFilter('all')">All Students</button>
+            <button class="toggle-btn" onclick="toggleFilter('modified')">Modified Only</button>
+            <button class="toggle-btn" onclick="toggleFilter('siblings')">With Siblings</button>
+            <button class="toggle-btn" onclick="toggleFilter('pending')">Pending</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Student Section -->
+            <div class="student-section">
+                <div class="section-header">
+                    <h3 class="section-title">Students - Class 3, Section A</h3>
+                    <div class="student-count">24 Students</div>
+                </div>
+                
+                <table class="student-table">
+                    <tbody>
+                        <!-- Student Row 1 -->
+                        <tr class="student-row" id="student-1">
+                            <td style="width: 250px;">
+                                <div class="student-info">
+                                    <div class="student-avatar">AK</div>
+                                    <div class="student-details">
+                                        <h4>Arjun Kumar</h4>
+                                        <div class="student-id">ID: STU001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 120px;">
+                                <div class="sibling-indicator">
+                                    <span class="tooltip" data-tooltip="2 siblings found">👨‍👩‍👧‍👦</span>
+                                    <span class="sibling-badge">2 Siblings</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-1')">
+                                            <option value="monthly">Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹2,500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹200</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹4,000</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of every month
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 120px;">
+                                <div class="status-badge status-default">Default</div>
+                            </td>
+                            <td style="width: 120px;">
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-1')">
+                                    Customize
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="customize-section" id="customize-student-1">
+                            <td colspan="5">
+                                <div class="customize-grid">
+                                    <div class="fee-customization">
+                                        <h4 style="margin-bottom: 12px;">Fee Customization</h4>
+                                        <div class="fee-head-item">
+                                            <span>Tuition Fee:</span>
+                                            <input type="number" class="fee-input" value="2500" min="0">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Lab Fee:</span>
+                                            <input type="number" class="fee-input" value="500" min="0">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Library Fee:</span>
+                                            <input type="number" class="fee-input" value="200" min="0">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Transport Fee:</span>
+                                            <input type="number" class="fee-input" value="800" min="0">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span><strong>Total:</strong></span>
+                                            <span><strong>₹4,000</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="discount-section">
+                                        <h4 style="margin-bottom: 12px;">Discount & Overrides</h4>
+                                        <div class="discount-options">
+                                            <div class="discount-radio">
+                                                <input type="radio" id="fixed-discount-1" name="discount-type-1" value="fixed">
+                                                <label for="fixed-discount-1">Fixed Amount</label>
+                                            </div>
+                                            <div class="discount-radio">
+                                                <input type="radio" id="percent-discount-1" name="discount-type-1" value="percent">
+                                                <label for="percent-discount-1">Percentage</label>
+                                            </div>
+                                        </div>
+                                        <input type="number" class="form-control" placeholder="Enter discount amount" style="margin-bottom: 12px;">
+                                        <div class="form-group">
+                                            <label>Override Due Date:</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Reason for Changes:</label>
+                                            <textarea class="reason-textarea" placeholder="Enter reason for fee modification..."></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                            <button class="btn btn-success btn-sm">Apply Changes</button>
+                                            <button class="btn btn-secondary btn-sm">Reset to Default</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 2 -->
+                        <tr class="student-row" id="student-2">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">PS</div>
+                                    <div class="student-details">
+                                        <h4>Priya Sharma <span class="modified-indicator tooltip" data-tooltip="Fee modified">✏️</span></h4>
+                                        <div class="student-id">ID: STU002</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span>—</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹2,250 <span class="modified-indicator tooltip" data-tooltip="Original: ₹2,500">✏️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹200</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹3,750</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of every month
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-modified">Modified</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">Customize</button>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 3 -->
+                        <tr class="student-row" id="student-3">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">RV</div>
+                                    <div class="student-details">
+                                        <h4>Rahul Verma <span class="warning-indicator tooltip" data-tooltip="Missing due date">⚠️</span></h4>
+                                        <div class="student-id">ID: STU003</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span class="tooltip" data-tooltip="3 siblings found">👨‍👩‍👧‍👦</span>
+                                    <span class="sibling-badge">3 Siblings</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select>
+                                            <option value="monthly">Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹2,500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹200</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹4,000</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        <span class="warning-indicator">Due date not set</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-pending">Pending</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">Customize</button>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 4 -->
+                        <tr class="student-row" id="student-4">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">SG</div>
+                                    <div class="student-details">
+                                        <h4>Sneha Gupta</h4>
+                                        <div class="student-id">ID: STU004</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span>—</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-4')">
+                                            <option value="monthly">Monthly</option>
+                                            <option value="quarterly" selected>Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹7,500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹1,500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹600</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹2,400</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹12,000</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of Jan, Apr, Jul, Oct
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-default">Default</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-4')">Customize</button>
+                            </td>
+                        </tr>
+                        <tr class="customize-section" id="customize-student-4">
+                            <td colspan="5">
+                                <div class="customize-grid">
+                                    <div class="fee-customization">
+                                        <h4 style="margin-bottom: 12px;">Fee Customization</h4>
+                                        <div class="fee-head-item">
+                                            <span>Tuition Fee:</span>
+                                            <input type="number" class="fee-input" value="7500" min="0" onchange="calculateTotal('student-4')">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Lab Fee:</span>
+                                            <input type="number" class="fee-input" value="1500" min="0" onchange="calculateTotal('student-4')">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Library Fee:</span>
+                                            <input type="number" class="fee-input" value="600" min="0" onchange="calculateTotal('student-4')">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span>Transport Fee:</span>
+                                            <input type="number" class="fee-input" value="2400" min="0" onchange="calculateTotal('student-4')">
+                                        </div>
+                                        <div class="fee-head-item">
+                                            <span><strong>Total:</strong></span>
+                                            <span id="total-student-4"><strong>₹12,000</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="discount-section">
+                                        <h4 style="margin-bottom: 12px;">Discount & Overrides</h4>
+                                        <div class="discount-options">
+                                            <div class="discount-radio">
+                                                <input type="radio" id="fixed-discount-4" name="discount-type-4" value="fixed" onchange="toggleDiscountInput('student-4')">
+                                                <label for="fixed-discount-4">Fixed Amount</label>
+                                            </div>
+                                            <div class="discount-radio">
+                                                <input type="radio" id="percent-discount-4" name="discount-type-4" value="percent" onchange="toggleDiscountInput('student-4')">
+                                                <label for="percent-discount-4">Percentage</label>
+                                            </div>
+                                        </div>
+                                        <input type="number" id="discount-value-4" class="form-control" placeholder="Enter discount amount" style="margin-bottom: 12px;" onchange="applyDiscount('student-4')">
+                                        <div class="form-group">
+                                            <label>Override Due Date:</label>
+                                            <input type="date" class="form-control" id="due-date-4">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Reason for Changes:</label>
+                                            <textarea class="reason-textarea" id="reason-4" placeholder="Enter reason for fee modification..."></textarea>
+                                        </div>
+                                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                            <button class="btn btn-success btn-sm" onclick="applyChanges('student-4')">Apply Changes</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="resetToDefault('student-4')">Reset to Default</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 5 - Aarav Patel (2nd child with sibling discount) -->
+                        <tr class="student-row" id="student-5">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">AP</div>
+                                    <div class="student-details">
+                                        <h4>Aarav Patel <span class="modified-indicator tooltip" data-tooltip="Sibling discount applied">🏷️</span></h4>
+                                        <div class="student-id">ID: STU005</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span class="tooltip" data-tooltip="1 sibling found">👨‍👩‍👧‍👦</span>
+                                    <span class="sibling-badge">2nd Child</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-5')">
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹1,875 <span class="modified-indicator tooltip" data-tooltip="25% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹375 <span class="modified-indicator tooltip" data-tooltip="25% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹150 <span class="modified-indicator tooltip" data-tooltip="25% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹3,200</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of every month
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-modified">Sibling Discount</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-5')">Customize</button>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 6 - Meera Singh (Scholarship student) -->
+                        <tr class="student-row" id="student-6">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">MS</div>
+                                    <div class="student-details">
+                                        <h4>Meera Singh <span class="modified-indicator tooltip" data-tooltip="Scholarship applied">🏆</span></h4>
+                                        <div class="student-id">ID: STU006</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span>—</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-6')">
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹1,250 <span class="modified-indicator tooltip" data-tooltip="50% Merit Scholarship">🏆</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹0 <span class="modified-indicator tooltip" data-tooltip="Library fee waived">🏆</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹2,550</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of every month
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-modified">Scholarship</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-6')">Customize</button>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 7 - Karan Joshi (Late fee applied) -->
+                        <tr class="student-row" id="student-7">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">KJ</div>
+                                    <div class="student-details">
+                                        <h4>Karan Joshi <span class="warning-indicator tooltip" data-tooltip="Late fee applied">⏰</span></h4>
+                                        <div class="student-id">ID: STU007</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span>—</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-7')">
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹2,500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹500</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹200</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Late Fee:</span>
+                                            <span style="color: #e53e3e;">₹200 <span class="warning-indicator tooltip" data-tooltip="Payment overdue">⏰</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹4,200</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        <span class="warning-indicator">Overdue: 1st Nov 2024</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-pending">Overdue</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-7')">Customize</button>
+                            </td>
+                        </tr>
+
+                        <!-- Student Row 8 - Diya Sharma (3rd child with maximum sibling discount) -->
+                        <tr class="student-row" id="student-8">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">DS</div>
+                                    <div class="student-details">
+                                        <h4>Diya Sharma <span class="modified-indicator tooltip" data-tooltip="Maximum sibling discount">🏷️</span></h4>
+                                        <div class="student-id">ID: STU008</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="sibling-indicator">
+                                    <span class="tooltip" data-tooltip="2 siblings found">👨‍👩‍👧‍👦</span>
+                                    <span class="sibling-badge">3rd Child</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fee-info">
+                                    <div class="fee-frequency">
+                                        <select onchange="updateFeeFrequency(this, 'student-8')">
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="fee-breakdown">
+                                        <div class="fee-item">
+                                            <span>Tuition:</span>
+                                            <span>₹1,250 <span class="modified-indicator tooltip" data-tooltip="50% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Lab Fee:</span>
+                                            <span>₹250 <span class="modified-indicator tooltip" data-tooltip="50% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Library:</span>
+                                            <span>₹100 <span class="modified-indicator tooltip" data-tooltip="50% sibling discount applied">🏷️</span></span>
+                                        </div>
+                                        <div class="fee-item">
+                                            <span>Transport:</span>
+                                            <span>₹800</span>
+                                        </div>
+                                    </div>
+                                    <div class="fee-total">
+                                        <div class="fee-item">
+                                            <span>Total:</span>
+                                            <span>₹2,400</span>
+                                        </div>
+                                    </div>
+                                    <div class="due-dates">
+                                        Due: 1st of every month
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="status-badge status-modified">Max Discount</div>
+                            </td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="toggleCustomize('student-8')">Customize</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sibling Panel -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <span>🔗 Sibling Connections</span>
+                    </div>
+                    <div class="sidebar-content">
+                        <!-- Sibling Panel -->
+                        <div class="sibling-list">
+                            <div class="sibling-item">
+                                <div class="sibling-info">
+                                    <div class="sibling-avatar">AK</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">Arjun Kumar</div>
+                                        <div style="font-size: 12px; color: #718096;">Class 3-A (Current)</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-success">Selected</button>
+                            </div>
+                            <div class="sibling-item">
+                                <div class="sibling-info">
+                                    <div class="sibling-avatar">VK</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">Vikram Kumar</div>
+                                        <div style="font-size: 12px; color: #718096;">Class 1-B</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-success" onclick="linkSibling('VK')">Linked</button>
+                            </div>
+                            <div class="sibling-item">
+                                <div class="sibling-info">
+                                    <div class="sibling-avatar">AP</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">Aarav Patel</div>
+                                        <div style="font-size: 12px; color: #718096;">Class 3-A (2nd Child)</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-warning">25% Discount</button>
+                            </div>
+                            <div class="sibling-item">
+                                <div class="sibling-info">
+                                    <div class="sibling-avatar">DS</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">Diya Sharma</div>
+                                        <div style="font-size: 12px; color: #718096;">Class 3-A (3rd Child)</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-success">50% Discount</button>
+                            </div>
+                            <div class="sibling-item">
+                                <div class="sibling-info">
+                                    <div class="sibling-avatar">RV</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 14px;">Rahul Verma</div>
+                                        <div style="font-size: 12px; color: #718096;">Class 3-A (Has 3 siblings)</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-secondary" onclick="linkSibling('RV')">Link Family</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <h4 style="font-size: 14px; margin-bottom: 8px;">Sibling Discount Rules</h4>
+                            <div style="font-size: 12px; color: #718096; margin-bottom: 8px;">
+                                • 1st Child: Full fee<br>
+                                • 2nd Child: 25% discount<br>
+                                • 3rd Child: 50% discount<br>
+                                • 4th+ Child: 75% discount
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-sm btn-primary" onclick="applySiblingDiscount()">Apply Family Discount</button>
+                                <button class="btn btn-sm btn-secondary" onclick="bulkUpdateSiblings()">Bulk Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Panel -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <span>📊 Configuration Summary</span>
+                    </div>
+                    <div class="sidebar-content">
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">32</div>
+                                <div class="stat-label">Total Students</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">8</div>
+                                <div class="stat-label">Modified</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">₹45,250</div>
+                                <div class="stat-label">Total Savings</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">With Siblings</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="font-size: 14px; margin-bottom: 8px;">Recent Changes</h4>
+                            <div style="font-size: 12px; color: #718096; line-height: 1.5;">
+                                • Priya Sharma: 10% discount applied<br>
+                                • Meera Singh: Merit scholarship activated<br>
+                                • Aarav Patel: Sibling discount (25%)<br>
+                                • Diya Sharma: Max sibling discount (50%)<br>
+                                • Karan Joshi: Late fee added (₹200)<br>
+                                • Rahul Verma: Due date pending
+                            </div>
+                        </div>
+                        
+                        <div class="summary-actions">
+                            <button class="btn btn-success" style="width: 100%;" onclick="saveAllMappings()">
+                                💾 Save All Mappings
+                            </button>
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="exportToExcel()">
+                                📤 Export to Excel
+                            </button>
+                            <button class="btn btn-warning" style="width: 100%;" onclick="bulkApplyChanges()">
+                                🔄 Bulk Apply Changes
+                            </button>
+                            <button class="btn btn-danger" style="width: 100%;" onclick="resetAllChanges()">
+                                🔙 Reset All Changes
+                            </button>
+                        </div>>
+                                • Sibling discount: 5 families affected
+                            </div>
+                        </div>
+                        
+                        <div class="summary-actions">
+                            <button class="btn btn-success" style="width: 100%;">
+                                💾 Save All Mappings
+                            </button>
+                            <button class="btn btn-secondary" style="width: 100%;">
+                                📤 Export to Excel
+                            </button>
+                            <button class="btn btn-warning" style="width: 100%;">
+                                🔄 Bulk Apply Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Log Panel -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <span>📋 Audit Log</span>
+                    </div>
+                    <div class="sidebar-content">
+                        <div style="font-size: 12px; color: #718096; line-height: 1.6;">
+                            <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                                <div style="font-weight: 600; color: #2d3748;">Admin User</div>
+                                <div>Modified Priya Sharma's tuition fee</div>
+                                <div style="color: #a0aec0;">2 hours ago</div>
+                            </div>
+                            <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                                <div style="font-weight: 600; color: #2d3748;">Fee Manager</div>
+                                <div>Applied sibling discount to Kumar family</div>
+                                <div style="color: #a0aec0;">1 day ago</div>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <div style="font-weight: 600; color: #2d3748;">Admin User</div>
+                                <div>Bulk updated quarterly fees</div>
+                                <div style="color: #a0aec0;">2 days ago</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" style="width: 100%; margin-top: 8px;">
+                            View Full Log
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for interactive functionality
+        function fetchStudents() {
+            const classSelect = document.getElementById('class-select');
+            const sectionSelect = document.getElementById('section-select');
+            const studentSearch = document.getElementById('student-search');
+            
+            if (classSelect.value && sectionSelect.value) {
+                alert(`Fetching students for ${classSelect.options[classSelect.selectedIndex].text} - ${sectionSelect.options[sectionSelect.selectedIndex].text}`);
+            } else if (studentSearch.value) {
+                alert(`Searching for student: ${studentSearch.value}`);
+            } else {
+                alert('Please select class & section or enter student ID');
+            }
+        }
+
+        function toggleCustomize(studentId) {
+            const customizeSection = document.getElementById(`customize-${studentId}`);
+            const studentRow = document.getElementById(studentId);
+            
+            if (customizeSection.classList.contains('active')) {
+                customizeSection.classList.remove('active');
+                studentRow.classList.remove('expanded');
+            } else {
+                // Hide all other customize sections
+                document.querySelectorAll('.customize-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.querySelectorAll('.student-row').forEach(row => {
+                    row.classList.remove('expanded');
+                });
+                
+                // Show current customize section
+                customizeSection.classList.add('active');
+                studentRow.classList.add('expanded');
+            }
+        }
+
+        function updateFeeFrequency(selectElement, studentId) {
+            const frequency = selectElement.value;
+            const studentRow = document.getElementById(studentId);
+            const feeInfo = studentRow.querySelector('.fee-info');
+            
+            // This would typically update the fee breakdown based on frequency
+            // For demo purposes, we'll just show an alert
+            alert(`Fee frequency updated to: ${frequency.charAt(0).toUpperCase() + frequency.slice(1)}`);
+        }
+
+        function toggleFilter(filterType) {
+            // Remove active class from all toggle buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Here you would implement the actual filtering logic
+            // For demo purposes, we'll just show an alert
+            alert(`Filtering by: ${filterType}`);
+        }
+
+        // Add event listeners for form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Class/Section dependency
+            document.getElementById('class-select').addEventListener('change', function() {
+                const sectionSelect = document.getElementById('section-select');
+                if (this.value) {
+                    sectionSelect.disabled = false;
+                    document.getElementById('student-search').disabled = true;
+                } else {
+                    sectionSelect.disabled = true;
+                    document.getElementById('student-search').disabled = false;
+                }
+            });
+            
+            // Student search independence
+            document.getElementById('student-search').addEventListener('input', function() {
+                const classSelect = document.getElementById('class-select');
+                const sectionSelect = document.getElementById('section-select');
+                
+                if (this.value) {
+                    classSelect.disabled = true;
+                    sectionSelect.disabled = true;
+                } else {
+                    classSelect.disabled = false;
+                    sectionSelect.disabled = false;
+                }
+            });
+            
+            // Fee input calculations
+            document.querySelectorAll('.fee-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    // Calculate total when individual fees are changed
+                    const container = this.closest('.fee-customization');
+                    const inputs = container.querySelectorAll('.fee-input');
+                    let total = 0;
+                    
+                    inputs.forEach(inp => {
+                        total += parseFloat(inp.value) || 0;
+                    });
+                    
+                    // Update total display (you'd need to add this element)
+                    console.log('New total:', total);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
